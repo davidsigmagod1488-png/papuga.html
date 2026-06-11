@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гра Папуга</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 350px;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .speech-bubble {
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent;
+            display: block;
+            width: 0;
+        }
+
+        .parrot-avatar {
+            font-size: 100px;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.3s;
+            user-select: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .parrot-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .parrot-avatar:active {
+            transform: scale(0.9);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #ff6b81;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-input {
+            background: #2e86de;
+            box-shadow: 0 4px 15px rgba(46, 134, 222, 0.4);
+        }
+
+        .btn-input:hover {
+            background: #54a0ff;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 24px);
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Папуга 🦜</h1>
+        
+        <div class="speech-bubble" id="speech">
+            Привіт! Я Кеша. Дай горішок або скажи щось!
+        </div>
+
+        <div class="parrot-avatar" id="parrot" onclick="petParrot()">🦜</div>
+
+        <div class="stats">
+            <div>Mood: <span id="mood">😊 Веселий</span></div>
+            <div>Горішки: <span id="nuts">5</span></div>
+        </div>
+
+        <input type="text" id="userInput" placeholder="Напиши щось папузі...">
+        <button class="btn btn-input" onclick="talkToParrot()">Навчити слова</button>
+        <button class="btn" onclick="feedParrot()">🎯 Дати горішок</button>
+    </div>
+
+    <script>
+        let nutCount = 5;
+        const speechElement = document.getElementById('speech');
+        const moodElement = document.getElementById('mood');
+        const nutsElement = document.getElementById('nuts');
+        const parrotElement = document.getElementById('parrot');
+
+        const randomPhrases = [
+            "Кра-а-а! Спиш чи що?",
+            "Почухай крильце!",
+            "Хто хороший папуга? Я хороший папуга!",
+            "Дай горіх, а то з'їм твої шпалери!",
+            "Кукаріку! Ой, тобто Кр-р-ра!"
+        ];
+
+        function talkToParrot() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            
+            if (text === "") {
+                speechElement.innerText = "Ти нічого не сказав! Кррра!";
+                return;
+            }
+
+            // Папуга повторює слово на свій лад
+            speechElement.innerText = `«${text}»? Крр-а-а! ${text}! Повторюха-муха!`;
+            input.value = "";
+            
+            // Випадкова зміна емодзі папуги на секунду
+            animateParrot('🤪');
+        }
+
+        function feedParrot() {
+            if (nutCount > 0) {
+                nutCount--;
+                nutsElement.innerText = nutCount;
+                speechElement.innerText = "Ням-ням-ням! Смачний горішок! Давай ще!";
+                moodElement.innerText = "🥰 Щасливий";
+                animateParrot('😋');
+            } else {
+                speechElement.innerText = "Горішки закінчилися! Крра! Погладь мене, щоб підняти настрій!";
+                moodElement.innerText = "😢 Голодний";
+                animateParrot('🦜');
+            }
+        }
+
+        function petParrot() {
+            speechElement.innerText = "Ммм, кайф... Чухай за вушком... Ой, у мене ж нема вушок! Крр!";
+            if (nutCount === 0 && Math.random() > 0.5) {
+                // Шанс знайти горішок при погладжуванні
+                nutCount += 2;
+                nutsElement.innerText = nutCount;
+                speechElement.innerText += " О! Я знайшов під пір'ям ще 2 горішки!";
+            }
+            moodElement.innerText = "😎 Задоволений";
+            animateParrot('💖');
+        }
+
+        function animateParrot(emoji) {
+            parrotElement.innerText = emoji;
+            setTimeout(() => {
+                parrotElement.innerText = '🦜';
+            }, 1000);
+        }
+
+        // Випадкові репліки кожні 10 секунд, якщо гравець нічого не робить
+        setInterval(() => {
+            if (Math.random() > 0.6) {
+                const randomIdx = Math.floor(Math.random() * randomPhrases.length);
+                speechElement.innerText = randomPhrases[randomIdx];
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
